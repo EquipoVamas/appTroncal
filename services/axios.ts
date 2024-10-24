@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-export const URL = "https://semiperu.apisvamas.com/apisemiperu";
+export const URL = "https://api.semi.nom.pe/apisemiperu";
 
 export const instance = axios.create({
   baseURL: URL
