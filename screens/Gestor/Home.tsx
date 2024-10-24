@@ -229,7 +229,7 @@ const Home = () => {
         search={searching} 
         prefix={prefix} 
         backNavigation={onChangeNavigation} 
-        download={saveDetails} refresh={getTroncal}
+        refresh={getTroncal}
         modeActive={mode} setModeActive={setMode}
       />
 
@@ -252,10 +252,6 @@ const Home = () => {
         )
       }
 
-      {/* <BottomSheetActions
-        data={actionsData}
-        visible={visibleActions}
-      /> */}
     </Layout>
   )
 }

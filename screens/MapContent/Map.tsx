@@ -324,6 +324,7 @@ const Map = () => {
               activeCursor="all-scroll"
               style={{ marginHorizontal: 15 }}>
               <BottomSheetHeader
+              onClose={() => {}}
                 data={dataBottomSheet}
                 openStatus={setBottomSheetStatus}
                 dataRegister={setBottomSheetStatusData}
