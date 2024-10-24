@@ -1,0 +1,172 @@
+[
+  {
+    "name": "items",
+    "columns": [
+      { "name": "id", "type": "INTEGER PRIMARY KEY AUTOINCREMENT" },
+      { "name": "nombre", "type": "TEXT NULL" },
+      { "name": "estado", "type": "INTEGER NULL" },
+      { "name": "file", "type": "BLOB", "options": "NULL" },
+      { "name": "materiales", "type": "BLOB", "options": "NULL" }
+    ]
+  },
+
+  {
+    "name": "tipoEstado",
+    "columns": [
+      { "name": "id", "type": "INTEGER PRIMARY KEY AUTOINCREMENT" },
+      { "name": "nombre", "type": "TEXT NULL" },
+      { "name": "item", "type": "TEXT NULL" },
+      { "name": "color", "type": "TEXT NULL" }
+    ]
+  },
+
+  {
+    "name": "unidadMedida",
+    "columns": [
+      { "name": "id", "type": "INTEGER PRIMARY KEY AUTOINCREMENT" },
+      { "name": "nombre", "type": "TEXT NULL" },
+      { "name": "item", "type": "TEXT NULL" }
+    ]
+  },
+
+  {
+    "name": "tipoVia",
+    "columns": [
+      { "name": "id", "type": "INTEGER PRIMARY KEY AUTOINCREMENT" },
+      { "name": "nombre", "type": "TEXT NULL" },
+      { "name": "item", "type": "TEXT NULL" }
+    ]
+  },
+
+  {
+    "name": "poste",
+    "columns": [
+      { "name": "id", "type": "INTEGER PRIMARY KEY AUTOINCREMENT" },
+      { "name": "codInterno", "type": "TEXT NULL" },
+      { "name": "latitud", "type": "TEXT NULL" },
+      { "name": "longitud", "type": "TEXT NULL" },
+      { "name": "nivelTension", "type": "TEXT NULL" },
+      { "name": "altura", "type": "TEXT NULL" },
+      { "name": "idMufa", "type": "TEXT NULL" },
+      { "name": "idSubMufa", "type": "TEXT NULL" },
+      { "name": "idPropietario", "type": "TEXT NULL" },
+      { "name": "editado", "type": "TEXT NULL DEFAULT 0" }
+    ]
+  },
+
+  {
+    "name": "empresa",
+    "columns": [
+      { "name": "id", "type": "INTEGER PRIMARY KEY AUTOINCREMENT" },
+      { "name": "razonSocial", "type": "TEXT NULL" },
+      { "name": "nombreComercial", "type": "TEXT NULL" },
+      { "name": "ruc", "type": "TEXT NULL" },
+      { "name": "item", "type": "TEXT NULL" }
+    ]
+  },
+
+  {
+    "name": "folder",
+    "columns": [
+      { "name": "id", "type": "INTEGER PRIMARY KEY AUTOINCREMENT" },
+      { "name": "name", "type": "TEXT NULL" },
+      { "name": "prefix", "type": "TEXT NULL" }
+    ]
+  },
+
+  {
+    "name": "troncal",
+    "columns": [
+      { "name": "id", "type": "INTEGER PRIMARY KEY AUTOINCREMENT" },
+      { "name": "codInterno", "type": "TEXT NULL" },
+      { "name": "nombre", "type": "TEXT NULL" },
+      { "name": "distrito", "type": "TEXT NULL" },
+      { "name": "idEmpresa", "type": "TEXT NULL" },
+      { "name": "idSede", "type": "TEXT NULL" },
+      { "name": "idTipoEstado", "type": "TEXT NULL" },
+      { "name": "item", "type": "TEXT NULL" },
+      { "name": "carpeta", "type": "TEXT NULL DEFAULT 0" }
+    ]
+  },
+
+  {
+    "name": "nodo",
+    "columns": [
+      { "name": "id", "type": "INTEGER PRIMARY KEY AUTOINCREMENT" },
+      { "name": "codInterno", "type": "TEXT NULL" },
+      { "name": "nombre", "type": "TEXT NULL" },
+      { "name": "idTroncal", "type": "TEXT NULL" },
+      { "name": "item", "type": "TEXT NULL" },
+      { "name": "idTipoEstado", "type": "TEXT NULL"}
+    ]
+  },
+
+  {
+    "name": "mufa",
+    "columns": [
+      { "name": "id", "type": "INTEGER PRIMARY KEY AUTOINCREMENT" },
+      { "name": "codInterno", "type": "TEXT NULL" },
+      { "name": "idNodo", "type": "TEXT NULL" },
+      { "name": "nombre", "type": "TEXT NULL" },
+      { "name": "idTipoEstado", "type": "TEXT NULL" },
+      { "name": "item", "type": "TEXT NULL" }
+    ]
+  },
+
+  {
+    "name": "subMufa",
+    "columns": [
+      { "name": "id", "type": "INTEGER PRIMARY KEY AUTOINCREMENT" },
+      { "name": "codInterno", "type": "TEXT NULL" },
+      { "name": "nombre", "type": "TEXT NULL" },
+      { "name": "idMufa", "type": "TEXT NULL" },
+      { "name": "idTipoEstado", "type": "TEXT NULL" },
+      { "name": "item", "type": "TEXT NULL" }
+    ]
+  },
+
+  {
+    "name": "detalle",
+    "columns": [
+      { "name": "id", "type": "INTEGER PRIMARY KEY AUTOINCREMENT" },
+      { "name": "bool", "type": "TEXT NULL DEFAULT 0" },
+      { "name": "codInterno", "type": "TEXT NULL" },
+      { "name": "codigo", "type": "TEXT NULL" },
+      { "name": "idProducto", "type": "TEXT NULL" },
+      { "name": "nombre", "type": "TEXT NULL" },
+      { "name": "tipo", "type": "TEXT NULL" },
+      { "name": "estado", "type": "TEXT NULL" },
+      { "name": "cantidadInicial", "type": "INTEGER NULL" },
+      { "name": "cantidadReferencia", "type": "INTEGER NULL" },
+      { "name": "cantidadFinal", "type": "INTEGER NULL" },
+      { "name": "precio", "type": "TEXT NULL" },
+      { "name": "idTipoVia", "type": "TEXT NULL" },
+      { "name": "ladoVia", "type": "TEXT NULL" },
+      { "name": "nombreVia", "type": "TEXT NULL" },
+      { "name": "lote", "type": "TEXT NULL" },
+      { "name": "direccion", "type": "TEXT NULL" },
+      { "name": "latitud", "type": "TEXT NULL" },
+      { "name": "longitud", "type": "TEXT NULL" },
+      { "name": "apoyo", "type": "INTEGER NULL" },
+      { "name": "idPropietario", "type": "TEXT NULL" },
+      { "name": "propietario", "type": "TEXT NULL" },
+      { "name": "idUsuario", "type": "TEXT NULL" },
+      { "name": "nivelTension", "type": "TEXT NULL" },
+      { "name": "idUnidadMedidaAlto", "type": "TEXT NULL" },
+      { "name": "alto", "type": "TEXT NULL" },
+      { "name": "idUnidadMedidaAncho", "type": "TEXT NULL" },
+      { "name": "ancho", "type": "TEXT NULL" },
+      { "name": "item", "type": "TEXT NULL" },
+      { "name": "especificaciones", "type": "BLOB NULL" },
+      { "name": "materiales", "type": "BLOB NULL" },
+      { "name": "referencias", "type": "BLOB NULL" },
+      { "name": "archivos", "type": "BLOB NULL" },
+      { "name": "idTipoEstado", "type": "TEXT NULL" },
+      { "name": "idSubMufa", "type": "TEXT NULL" },
+      { "name": "idMufa", "type": "TEXT NULL" },
+      { "name": "enviado", "type": "INTEGER" },
+      { "name": "editado", "type": "INTEGER" }
+    ]
+  }
+]
+
