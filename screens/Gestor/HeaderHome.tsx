@@ -14,7 +14,6 @@ interface Props {
   prefix : any;
   backNavigation? : any;
   refresh: any;
-  download: any;
   search: any;
   modeActive: "card" | "list";
   setModeActive: (data:any) => void;
@@ -23,7 +22,7 @@ interface Props {
 
 const SearchHome = ( props : Props ) => {
   const navigation = useNavigation<NavigationProp<any>>();
-  const { prefix, backNavigation, refresh, search, modeActive, setModeActive } = props;
+  const { prefix, backNavigation, search, modeActive, setModeActive } = props;
   const { mode } = useBearStore();
   const isDarkMode = mode === 'dark';
   const [modalVi, setModalVi] = useState(false);

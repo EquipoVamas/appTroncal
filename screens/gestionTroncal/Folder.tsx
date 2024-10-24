@@ -128,7 +128,7 @@ const Carpetas = () => {
             ),
           )}
 
-          {filesView?.map((value: any) =>
+          {/* {filesView?.map((value: any) =>
             mode === 'card' ? (
               <FolderItem
                 data={value}
@@ -145,7 +145,7 @@ const Carpetas = () => {
                 folder={false}
               />
             ),
-          )}
+          )} */}
         </ScrollView>
       </View>
 
@@ -166,9 +166,7 @@ const style = StyleSheet.create({
     margin: 20,
     padding: 15,
     borderRadius: 30,
-    borderColor: '#ffff',
     borderWidth: 3,
-    backgroundColor: '#ffff',
     gap: 4,
   },
   containerHeader: {
