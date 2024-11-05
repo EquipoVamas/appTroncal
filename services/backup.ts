@@ -25,9 +25,10 @@ export const evalDB = async () => {
     // Tipo estado
     const status = await getTypeStatusServer();
     status?.data?.forEach( async (val :any) => {
-        if(val?.nombre == 'Pendiente' || val?.nombre == 'Procesado' || val?.nombre == 'Cancelado' ) {
-          saveTypeStatusLocal({ nombre: val?.nombre, item: val?._id, color: val?.color });
-        }
+      if(val?.nombre == 'Pendiente' || val?.nombre == 'Procesado' || val?.nombre == 'Cancelado' ) {
+        console.log(val)
+        await saveTypeStatusLocal({ nombre: val?.nombre, item: val?._id, color: val?.color });
+      }
     });
 
     // Unidad de medida
@@ -59,7 +60,10 @@ export const evalDB = async () => {
     console.log("Troncal ------------------")
     troncalServer?.data?.forEach(async (val :any) => {
       const resultExist = troncalLocal.find(( item : any ) => val?._id == item?.item);
+
       if(!resultExist) {
+        console.log(val)
+
         saveTroncalLocal({ codInterno: val?.codInterno, nombre: val?.nombre, idTipoEstado: val?.idTipoEstado, item: val?._id, distrito: val?.idDistrito?.nombre })
         console.log(val?.nombre)
       }

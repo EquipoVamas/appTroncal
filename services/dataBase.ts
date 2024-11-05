@@ -291,7 +291,7 @@ export const getTroncalLocal = () => {
   return new Promise((resolve, reject) => {
     db.transaction(tx => {
       tx.executeSql(
-        'SELECT * FROM troncal',
+        'SELECT * FROM troncal ORDER BY nombre ASC', // Ordering by name in ascending order
         [],
         (tx, results) => {
           let items = [];
@@ -307,6 +307,7 @@ export const getTroncalLocal = () => {
     });
   });
 };
+
 
 export const getOneTroncal = (id:string) => {
   return new Promise((resolve, reject) => {
@@ -373,7 +374,7 @@ export const getFilterNodoLocal = (idTroncal: string) => {
   return new Promise((resolve, reject) => {
     db.transaction(tx => {
       tx.executeSql(
-        'SELECT * FROM nodo WHERE idTroncal = ?',
+        `SELECT * FROM nodo WHERE idTroncal = ? ORDER BY CAST(substr(nombre, instr(nombre, '-') + 1) AS INTEGER) ASC`,
         [idTroncal],
         (tx, results) => {
           let rows = [];
@@ -652,7 +653,7 @@ export const getFilterMufaLocal = (idNodo: string) => {
   return new Promise((resolve, reject) => {
     db.transaction(tx => {
       tx.executeSql(
-        'SELECT * FROM mufa WHERE idNodo = ?',
+        `SELECT * FROM mufa WHERE idNodo = ? ORDER BY CAST(substr(nombre, instr(nombre, '-') + 1) AS INTEGER) ASC`,
         [idNodo],
         (tx, results) => {
           let rows = [];
@@ -733,7 +734,8 @@ export const getOneSubMufa = (id:string) => {
   return new Promise((resolve, reject) => {
     db.transaction(tx => {
       tx.executeSql(
-        'SELECT * FROM subMufa WHERE item = ?',
+        `SELECT * FROM subMufa WHERE item = ?
+        ORDER BY CAST(substr(nombre, instr(nombre, '-') + 1) AS INTEGER) ASC`,
         [id],
         (tx, results) => {
           resolve(results.rows.item(0)); 
@@ -789,11 +791,13 @@ export const getAllDetalleLocal = () => {
   });
 };
 
-export const getFilterDetalleLocal = ( idSubMufa: string ) => {
+export const getFilterDetalleLocal = (idSubMufa: string) => {
   return new Promise((resolve, reject) => {
     db.transaction(tx => {
       tx.executeSql(
-        'SELECT * FROM detalle WHERE idSubMufa = ?',
+        `SELECT * FROM detalle 
+         WHERE idSubMufa = ? 
+         ORDER BY CAST(substr(nombre, instr(nombre, '-') + 1) AS INTEGER) ASC`,
         [idSubMufa],
         (tx, results) => {
           let rows = [];

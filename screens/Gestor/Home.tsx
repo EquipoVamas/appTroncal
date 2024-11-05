@@ -57,7 +57,6 @@ const Home = () => {
     if( newPrefixLength == 2 ) response = await getFilterMufaLocal(object?.item);
     if( newPrefixLength == 3 ) response = await getSubMufaLocal(object?.item);
     if( newPrefixLength == 4 ) response = await getFilterDetalleLocal(object?.item);
-
     setData(response);
     setDataSearch(response);
   }

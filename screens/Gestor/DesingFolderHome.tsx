@@ -21,23 +21,20 @@ const DesingFolderHome = ( props : Props ) => {
 
   const findByIdStatus = (id: any) => {
     const stp = typeStatus.find((tp: any) => tp.item == id);
-    
     if (stp) {
       return { color: stp.color, nombre: stp.nombre };
     }
-    
     return { color: "#69A42F", nombre: "Sin asignar" };
   };
 
   const getTypeStatus = async () => {
-    setTypeStatus([]);
     const response:any = await getTypeStatusLocal();
     setTypeStatus(response);
   };
   
   useEffect(() => {
-    getTypeStatus();
-  }, [ ])
+    if(data) getTypeStatus();
+  }, [data])
 
   return (
     <View style={modeList == "card" ? style.containerCard : style.containerList} >
