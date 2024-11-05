@@ -93,7 +93,6 @@ const BottomSheetHeader = (props : Props) => {
         }}>
         <Text style={style.title}>{data?.nombre}</Text>
           <TouchableOpacity activeOpacity={0.5} style={{ flexDirection: 'row', marginLeft: 8, alignItems: 'center', alignContent:'center' }} onPress={save}>
-            {/* <Badge size={15} style={{backgroundColor: dataTypeStatus?.color}} /> */}
             <Text style={[style.textProcess, {color: dataTypeStatus?.color}]}>
               {dataTypeStatus?.nombre}
             </Text>
@@ -212,8 +211,9 @@ const style = StyleSheet.create({
   },
   textProcess: {
     textTransform: 'capitalize',
-    fontWeight: 'semibold',
-    marginHorizontal: 6
+    fontWeight: 'bold',
+    marginHorizontal: 6,
+    fontSize: 20,
   },
   title: {
     fontWeight: 'bold',

@@ -52,9 +52,9 @@ const sendServerTask = async () => {
           const idTipoEstado :any = tipoEstados.find((val: any) => val.nombre === 'Pendiente');
           if (!idTipoEstado) throw new Error("Status 'Pendiente' not found");
           data.idTipoEstado = idTipoEstado.item;
-          // console.log("Enviado al servidor...", data.idMufa, data.idSubMufa);
+
           const res = await registerDetails(data.idMufa, data.idSubMufa, formData);
-          // console.log("Esto devuelve ekse server", res);
+
           if(res?.data){
             // console.log("Actualizado local...", res?.data );
             await updateDetalleLocal({ "item": res?.data?._id, "enviado": 1 }, det.id);

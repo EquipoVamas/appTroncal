@@ -48,7 +48,7 @@ const BottomSheetContent = ( props : Props) => {
         }
 
         setVisible(true);
-        takenFile({ id: data.id, orden : orden, file: response?.assets[0], descripcion: descripcion, edit: 0, nameCard: nameCard });
+        takenFile({ id: data.id, orden : orden, file: response?.assets[0], fechaFoto : new Date().toLocaleString(), descripcion: descripcion, edit: 0, nameCard: nameCard });
       }
     });
   };

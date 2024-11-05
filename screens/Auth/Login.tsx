@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { View, Text, Image, Dimensions } from 'react-native'
-import { Button, TextInput, Checkbox, HelperText } from 'react-native-paper'
+import { Button, TextInput, Checkbox, HelperText, Snackbar } from 'react-native-paper'
 import Layout from '../../components/Layout'
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { useForm, Controller } from 'react-hook-form'
@@ -11,6 +11,7 @@ import Loader from '../LoadingScreen'
 
 import Styles from '../style'
 import { useBearStore } from '../../store/storet';
+import { Colors } from 'react-native/Libraries/NewAppScreen';
 
 interface dataLogin {
   usuario: string;
@@ -18,6 +19,8 @@ interface dataLogin {
 }
 
 const Login = () => {
+  const { statusApp, statusNet } = useBearStore();
+
   const modes = useBearStore((state) => state.mode)
   const isDarkMode = modes === 'dark';
   const navigation = useNavigation<NavigationProp<any>>();
@@ -26,10 +29,27 @@ const Login = () => {
   const { authState, onLogin, onLoading } = useAuth();
   const { control, handleSubmit, setValue, formState: { errors }, reset, watch } = useForm<dataLogin>()
   const widthL = Math.round(Dimensions.get("window").width - 50)
+  const [visibleSnackBar, setVisibleSnackBar] = useState(false);
 
   const startLogin = async (data:dataLogin) => {
-    onLogin && onLogin(data.usuario, data.clave);
+    if( statusNet ) {
+      onLogin && onLogin(data.usuario, data.clave);
+    }else {
+      onToggleSnackBar();
+
+      setTimeout(() => {
+        onDismissSnackBar()
+      }, 1500);
+    }
   }
+
+  const onToggleSnackBar = () => setVisibleSnackBar(!visibleSnackBar);
+
+  const onDismissSnackBar = () => {
+    setTimeout(() => {
+      setVisibleSnackBar(false)
+    }, 1000)
+  };
 
   if(onLoading){
     return <Loader />
@@ -89,6 +109,23 @@ const Login = () => {
      {/*  <Button mode='text'  onPress={() => console.log("Recuperar...") } >¡Olvidé mi contraseña!</Button> */}
       <Button mode='contained-tonal' onPress={handleSubmit(startLogin)} style={{ backgroundColor: Styles.color_primary.color, marginTop: 20, marginHorizontal: 15 }} textColor='white' >Continuar</Button>
       <Text style={{ marginTop: 55, textAlign: "center" }} >v 0.1.1</Text>
+      <View style={{
+          justifyContent: 'space-between',
+        }}>
+        <Snackbar
+          visible={visibleSnackBar}
+          onDismiss={() => setVisibleSnackBar(false)}
+          elevation={3}
+          style= {{  backgroundColor: isDarkMode ? Colors.darker : Colors.lighter }}
+          action={{
+            label: 'Cerrar',
+            onPress: () => {
+              onDismissSnackBar();
+            },
+          }}>
+          <Text style={ { fontSize: 18 } }>Para iniciar sesión necesita conectarse a una red de internet.</Text>
+        </Snackbar>
+      </View>
     </Layout>
   )
 }

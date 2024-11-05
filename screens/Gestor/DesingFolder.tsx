@@ -41,6 +41,7 @@ const DesingFolder = (props : Props) => {
 
   useEffect(() => {
     getTypeStatus();
+    console.log(data)
   }, [data])
 
   return (

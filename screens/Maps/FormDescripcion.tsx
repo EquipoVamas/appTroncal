@@ -94,7 +94,6 @@ const FormDescripcion = ( { visible, setVisible, fileImage, refresh, takeFotoAga
       )
     }
     
-    console.log("oldFile", oldFile)
     const result = filesData.find(( val : any) => val?.orden == oldFile?.orden);
     let indexFile = -1;
     if(result) {
@@ -109,7 +108,7 @@ const FormDescripcion = ( { visible, setVisible, fileImage, refresh, takeFotoAga
 
     const res = await updateDetalleArchivos(JSON.stringify([...filesData, newFile]), fileImage?.id, editado);
 
-    if( res && statusNet && !statusApp) {
+    if( res && statusNet && !statusApp ) {
       const formData = new FormData();
       
       formData.append("data", JSON.stringify(newFile));
@@ -117,7 +116,7 @@ const FormDescripcion = ( { visible, setVisible, fileImage, refresh, takeFotoAga
 
       // Este manda al servidor
       const fileRes = await registerFileDetails(data?.item, formData);
-      console.log(fileRes)
+
       if(fileRes && fileRes?.data) {
         const allSent = filesData.every(
           (file: any) => file.enviado === 1,
