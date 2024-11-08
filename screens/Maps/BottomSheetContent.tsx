@@ -64,7 +64,6 @@ const BottomSheetContent = ( props : Props) => {
           latitud: lastKnownLocation?.latitude || '',
           longitud: lastKnownLocation?.longitude || '',
         });
-
       }
     });
   };
