@@ -3,7 +3,7 @@ import { Controller, useForm } from 'react-hook-form';
 import { StyleSheet, View, Image, TouchableOpacity, Touchable } from 'react-native'
 import { ActivityIndicator, Button, Dialog, HelperText, IconButton, Portal, SegmentedButtons, Snackbar, Text, TextInput } from 'react-native-paper'
 import stylesDefault from '../style';
-import { getOneDetalleItem, updateDetalleArchivos, updateDetalleLocal } from '../../services/dataBase';
+import { getOneDetalleItem, getOneMufa, getOneNodo, getOneSubMufa, getOneTroncal, updateDetalleArchivos, updateDetalleLocal } from '../../services/dataBase';
 import { useLocation } from '../../store/useLocation';
 
 import { CameraRoll } from '@react-native-camera-roll/camera-roll'
@@ -24,17 +24,18 @@ type DataForm = {
 }
 
 
-const FormDescripcion = ( { visible, setVisible, fileImage, refresh, takeFotoAgain, coordinateMarker } : any) => {
+const FormDescripcion = ( { visible, setVisible, fileImage, refresh, takeFotoAgain, coordinateMarker, dataRoute } : any) => {
 
   const { statusNet, statusApp } = useBearStore();
 
   const hideDialog = () => setVisible(false);
   const { control, setValue, formState: {errors}, reset, watch } = useForm<DataForm>();
-  const { lastKnownLocation, getLocation } = useLocation()
+  const { lastKnownLocation } = useLocation()
   // const [ distance, setDistance ] = useState<any>("0m");
   const [ loading, setLoading ] = useState(false);
   const modes = useBearStore((state) => state.mode)
   const isDarkMode = modes === 'dark';
+  const [ prefix, setPrefix ] = useState<any>([]);
 
   const [visibleSnackBar, setVisibleSnackBar] = useState(false);
 
@@ -42,6 +43,7 @@ const FormDescripcion = ( { visible, setVisible, fileImage, refresh, takeFotoAga
 
   const openModal = () => { 
     setModalVisible(true);
+    console.log(fileImage)
   };
 
   const closeModal = () => {
@@ -76,13 +78,14 @@ const FormDescripcion = ( { visible, setVisible, fileImage, refresh, takeFotoAga
     }
 
     setLoading(true);
+    
     const oldFile: any = {
       descripcion: isPowerMeter ? Number(descripcion).toFixed(2) : descripcion,
       orden: fileImage?.orden || null,
       file: fileImage?.file || null,
       fechaFoto: fileImage?.fechaFoto || null,
-      latitud: lastKnownLocation?.latitude || '',
-      longitud: lastKnownLocation?.longitude || '',
+      latitud: fileImage?.latitud || '',
+      longitud: fileImage?.longitud || '',
     };
 
     if( lastKnownLocation != null ) {
@@ -190,12 +193,24 @@ const FormDescripcion = ( { visible, setVisible, fileImage, refresh, takeFotoAga
     takeFotoAgain({ ...fileImage, edit: 1 });
   }
 
+  const setPrefixHeader = async ( data : any ) => {
+    const prefix = `${'https://semi.nyc3.digitaloceanspaces.com/SEMI PERU MONTAJES INDUSTRIALES S.A.C.'}/TRONCAL/${data?.carpeta?.nombre}/${data?.subcarpeta?.nombre}/${data?.categoria?.nombre}/${data?.subcategoria?.nombre}/${fileImage?.nameItem}`;
+    console.log(prefix)
+    setPrefix(prefix)
+  }
+
   useEffect(( ) => {
     if(fileImage) {
       setValue('descripcion', fileImage?.descripcion?.toString() || "");
+      console.log("fileImage", fileImage);
     }
   }, [ fileImage, coordinateMarker ])
-  
+
+  useEffect(( ) => {
+    if(dataRoute) {
+      setPrefixHeader(dataRoute)
+    }
+  }, [ dataRoute, fileImage ])
 
   return (
     <Portal>
@@ -246,7 +261,7 @@ const FormDescripcion = ( { visible, setVisible, fileImage, refresh, takeFotoAga
                     height: undefined,
                     aspectRatio: 1,
                   }}
-                  source={{uri: fileImage?.file?.uri}}
+                  source={{ uri: `${prefix}/${fileImage?.file?.nombre}` }}
                   resizeMode="contain"
                 />
               </TouchableOpacity>
@@ -325,7 +340,7 @@ const FormDescripcion = ( { visible, setVisible, fileImage, refresh, takeFotoAga
             />
             <Text style={{ fontSize: 17 }}>Cerrar</Text>
           </TouchableOpacity>
-          <ImageViewer imageUrls={ fileImage?.file?.uri ? [{ url : fileImage?.file?.uri }] : []} onCancel={closeModal}/>
+          <ImageViewer imageUrls={ fileImage?.file?.uri ? [{ url : `${prefix}/${fileImage?.file?.nombre}` }] : []} onCancel={closeModal}/>
         </View>
       </Modal>
     </Portal>

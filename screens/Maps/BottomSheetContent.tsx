@@ -9,6 +9,7 @@ import { useBearStore } from '../../store/storet';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { Controller, useForm } from 'react-hook-form';
 import Layout from '../../components/Layout';
+import { useLocation } from '../../store/useLocation';
 
 interface Props {
   data: any;
@@ -26,6 +27,8 @@ const BottomSheetContent = ( props : Props) => {
   const wavelengths = ['1310', '1550', '1310', '1550'];
   const [ cardImg, setCardImg ] = useState(schemaRef);
   const [ loading, setLoading ] = useState(false);
+
+  const { lastKnownLocation } = useLocation()
 
   const takePhoto = async ( item : any ) => {
     const { orden, nameCard }= item;
@@ -48,7 +51,20 @@ const BottomSheetContent = ( props : Props) => {
         }
 
         setVisible(true);
-        takenFile({ id: data.id, orden : orden, file: response?.assets[0], fechaFoto : new Date().toLocaleString(), descripcion: descripcion, edit: 0, nameCard: nameCard });
+        
+        takenFile({
+          id: data.id,
+          orden: orden,
+          file: response?.assets[0],
+          fechaFoto: new Date().toLocaleString(),
+          descripcion: descripcion,
+          edit: 0,
+          nameCard: nameCard,
+          nameItem: data?.nombre,
+          latitud: lastKnownLocation?.latitude || '',
+          longitud: lastKnownLocation?.longitude || '',
+        });
+
       }
     });
   };
@@ -74,7 +90,7 @@ const BottomSheetContent = ( props : Props) => {
           }
           
           setVisible(true);
-          takenFile({ id: data.id, orden : orden, file: response?.assets[0], descripcion: descripcion, fechaFoto : new Date().toLocaleString(), edit: 0, nameCard: nameCard });
+          takenFile({ id: data.id, orden : orden, file: response?.assets[0], descripcion: descripcion, fechaFoto : new Date().toLocaleString(), edit: 0, nameCard: nameCard, nameItem: data?.nombre, });
         }
     });
   };
@@ -132,7 +148,7 @@ const BottomSheetContent = ( props : Props) => {
         var descripcion = response?.descripcion;
         if ( statusIA && statusNet && isPowerMeter ) descripcion = await getDescriptionIA(response?.assets[0]);
 
-        var datos = { id: data.id, orden : response?.orden, file: response?.file, descripcion: descripcion, fechaFoto : response?.fechaFoto, nameCard: item?.nameCard, edit: 1 }
+        var datos = { id: data.id, orden : response?.orden, nameItem: data?.nombre, file: response?.file, descripcion: descripcion, fechaFoto : response?.fechaFoto, nameCard: item?.nameCard, edit: 1 }
         takenFile(datos);
         return true
       }

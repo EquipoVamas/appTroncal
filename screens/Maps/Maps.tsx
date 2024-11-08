@@ -21,7 +21,6 @@ import { getAllDetalleLocal, getOneDetalleItem, getTypeStatusLocal, updateDetall
 import BottomSheetHeader from './BottomSheetHeader';
 import FormDescripcion from './FormDescripcion';
 import BottomSheetContent from './BottomSheetContent';
-import BottomSheetStatus from '../MapContent/BottomSheetStatus';
 import ModalStatus from '../Gestor/ModalStatus';
 import { updateDetailsData } from '../../services/axios';
 import { filtrarDatos } from '../../components/Functions';
@@ -46,7 +45,7 @@ const Maps = () => {
   const bottomSheetRef = useRef<BottomSheet>(null);
 
   const [ selectedLocation, setSelectedLocation ] = useState<any>(null);
-  const [ dataRoute, setDataRoute ] = useState([]);
+  const [ dataRoute, setDataRoute ] = useState<any>([]);
   const [ detalle, setDetalle ] = useState([]);
 
   // Modal
@@ -260,7 +259,6 @@ const Maps = () => {
     };
     delete info.dataActions
 
-    console.log(info.dataActions)
     const response = await updateDetalleLocal(info, dataBottomSheet?.id);
 
     if(response) {
@@ -453,6 +451,7 @@ const Maps = () => {
                 visible={modalVisibleDescripcion}
                 setVisible={setModalVisibleDescripcion}
                 takeFotoAgain={setTakeAgain}
+                dataRoute={dataRoute}
                 coordinateMarker={{
                   latitud : dataBottomSheet.latitud,
                   longitud : dataBottomSheet.longitud

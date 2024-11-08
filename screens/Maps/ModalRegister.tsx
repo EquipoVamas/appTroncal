@@ -40,10 +40,8 @@ const ModalRegister = ( { visible = true , setVisible, loadAutomatic, refresh, i
   const onSubmit = async () => {
     try {
       loadActive();
-      console.log("1")
 
       let data:any = getValues();
-      console.log("2", data)
       if (!data) throw new Error("Invalid form data");
 
       data = {
