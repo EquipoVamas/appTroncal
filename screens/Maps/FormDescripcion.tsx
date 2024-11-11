@@ -41,6 +41,16 @@ const FormDescripcion = ( { visible, setVisible, fileImage, refresh, takeFotoAga
 
   const [isModalVisible, setModalVisible] = useState(false);
 
+  const [visibleSnackBarAlert, setVisibleSnackBarAlert] = useState(false);
+
+  const onToggleSnackBarAlert = () => setVisibleSnackBarAlert(!visibleSnackBarAlert);
+
+  const onDismissSnackBarAlert = () => {
+    setTimeout(() => {
+      setVisibleSnackBarAlert(false)
+    }, 1000)
+  };
+
   const openModal = () => { 
     setModalVisible(true);
     console.log(fileImage)
@@ -105,6 +115,7 @@ const FormDescripcion = ( { visible, setVisible, fileImage, refresh, takeFotoAga
       filesData[indexFile].modificado = 1;
     }
 
+    console.log("oldFile", oldFile)
     const newFile: any = await savePhoto(oldFile);
 
     var editado = 1; 
@@ -195,14 +206,13 @@ const FormDescripcion = ( { visible, setVisible, fileImage, refresh, takeFotoAga
 
   const setPrefixHeader = async ( data : any ) => {
     const prefix = `${'https://semi.nyc3.digitaloceanspaces.com/SEMI PERU MONTAJES INDUSTRIALES S.A.C.'}/TRONCAL/${data?.carpeta?.nombre}/${data?.subcarpeta?.nombre}/${data?.categoria?.nombre}/${data?.subcategoria?.nombre}/${fileImage?.nameItem}`;
-    console.log(prefix)
     setPrefix(prefix)
   }
 
   useEffect(( ) => {
     if(fileImage) {
+      console.log(fileImage)
       setValue('descripcion', fileImage?.descripcion?.toString() || "");
-      console.log("fileImage", fileImage);
     }
   }, [ fileImage, coordinateMarker ])
 
@@ -261,10 +271,16 @@ const FormDescripcion = ( { visible, setVisible, fileImage, refresh, takeFotoAga
                     height: undefined,
                     aspectRatio: 1,
                   }}
-                  source={{ uri: `${prefix}/${fileImage?.file?.nombre}` }}
+                  source={{ uri: fileImage?.file?.uri }}
                   resizeMode="contain"
                 />
               </TouchableOpacity>
+
+              <View style={{ marginVertical: 4, marginHorizontal: 10, marginBottom: 6}}>
+                <Text><Text style={ { fontWeight: 'bold' }}>Latitud:</Text> {fileImage?.latitud}</Text>
+                <Text><Text style={ { fontWeight: 'bold' }}>Longitud:</Text> {fileImage?.longitud}</Text>
+                <Text><Text style={ { fontWeight: 'bold' }}>Fecha:</Text> {fileImage?.fechaFoto}</Text>
+              </View>
 
               <Controller
                 name="descripcion"
@@ -331,6 +347,23 @@ const FormDescripcion = ( { visible, setVisible, fileImage, refresh, takeFotoAga
         </Snackbar>
       </View>
 
+      
+      <View style={style.container}>
+        <Snackbar
+          visible={visibleSnackBarAlert}
+          onDismiss={() => setVisibleSnackBarAlert(false)}
+          elevation={3}
+          style= {{  backgroundColor: isDarkMode ? Colors.darker : Colors.lighter }}
+          action={{
+            label: 'Cerrar',
+            onPress: () => {
+              onDismissSnackBarAlert();
+            },
+          }}>
+          <Text style={ { fontSize: 18 } }>No se obtenieron coordenadas, por favor vuelva a tomar la foto.</Text>
+        </Snackbar>
+      </View>
+
       <Modal isVisible={isModalVisible} onBackdropPress={closeModal} onDismiss={closeModal} 
         style={{ backgroundColor: '#fff', alignContent: 'center' }}>
         <View style={{ flex: 1 }}>
@@ -340,7 +373,7 @@ const FormDescripcion = ( { visible, setVisible, fileImage, refresh, takeFotoAga
             />
             <Text style={{ fontSize: 17 }}>Cerrar</Text>
           </TouchableOpacity>
-          <ImageViewer imageUrls={ fileImage?.file?.uri ? [{ url : `${prefix}/${fileImage?.file?.nombre}` }] : []} onCancel={closeModal}/>
+          <ImageViewer imageUrls={ fileImage?.file?.uri ? [{ url : fileImage?.file?.uri }] : []} onCancel={closeModal}/>
         </View>
       </Modal>
     </Portal>

@@ -6,7 +6,7 @@ import { Colors } from 'react-native/Libraries/NewAppScreen';
 import { Controller, useForm } from 'react-hook-form';
 import stylesDefault from '../style';
 import { registerDetails } from '../../services/axios';
-import { getTypeStatusLocal, saveDetalleLocal } from '../../services/dataBase';
+import { getTypeStatusLocal, saveDetalleLocal, updateDetalleLocal } from '../../services/dataBase';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Geocoder from 'react-native-geocoding';
 
@@ -67,22 +67,21 @@ const ModalRegister = ( { visible = true , setVisible, loadAutomatic, refresh, i
         var direccion = await getDireccionFromCoordenadas(data.latitud, data.longitud)
         data.direccion = direccion
       }
-      if ( statusNet && !statusApp ) {
-        console.log(data.idMufa)
-        console.log(data.idSubMufa)
-        const result = await saveServer(data.idMufa, data.idSubMufa, data);
-        console.log(result)
-        if (result?._id) {
-          data.item = result._id;
-          data.enviado = 1;
-        }
-      }
       
       const res = await saveLocal(data);
       if (res?.insertId) {
         insertId(res.insertId);
-      } else {
-        throw new Error("Local save failed");
+      }
+
+      if ( statusNet && !statusApp ) {
+        const result = await saveServer(data.idMufa, data.idSubMufa, data);
+        if (result?._id) {
+          data.item = result._id;
+          data.enviado = 1;
+
+          await updateDetalleLocal({ item : result?._id, enviado : 1 }, res.insertId)
+
+        }
       }
       resetForm();
     } catch (error) {

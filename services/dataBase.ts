@@ -606,6 +606,7 @@ export const saveDetalleLocal = (itemData: { [key: string]: any }) => {
   });
 };
 
+
 // Mufa
 export const saveMufaLocal = (itemData: { [key: string]: any }) => {
   return new Promise((resolve, reject) => {

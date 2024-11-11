@@ -5,6 +5,8 @@ import { ToasterHelper } from 'react-native-customizable-toast'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { Session } from '../types/session'
 import { useBearStore } from '../store/storet'
+import { resetTables } from '../services/dataBase'
+import { loadAllDataDownload } from '../services/download'
 
 interface AuthProps {
   authState?: { token: string | null; authenticated: boolean | null; user:Session | null };
@@ -77,6 +79,11 @@ export const AuthProvider = ({ children }: any ) => {
   const logout = async ( id:string | undefined, session: boolean = true ) => {
     await logoutUser({ idUsuario: id || user?.idUsuario })
     if(session){
+      resetTables("troncal");
+      resetTables("nodo");
+      resetTables("mufa");
+      resetTables("subMufa");
+      resetTables("detalle");
       setIsAuthenticated(false);
       setUser(null);
       removeSessionUser();
@@ -91,6 +98,7 @@ export const AuthProvider = ({ children }: any ) => {
       const res = await loginUser(usuario, clave);
       if(res.data){
         const { token } = res.data;
+        await loadAllDataDownload(res.data?.idUsuario)
         await AsyncStorage.setItem('token', token)
         setToken(token)
         setIsAuthenticated(true)
@@ -100,7 +108,6 @@ export const AuthProvider = ({ children }: any ) => {
       }
     } catch (error:any) {
       if (error.response) {
-        console.log("El error es:", error.response.data); // Datos de la respuesta
         if(error.response.data.message){
           var txtError = error.response.data.message
           if(txtError.includes("Sesión activa en otro dispositivo")){
@@ -112,15 +119,15 @@ export const AuthProvider = ({ children }: any ) => {
             ])
             return;
           }
-          ToasterHelper.show({ text: txtError, type: "error", timeout: 5000 })
+          // ToasterHelper.show({ text: txtError, type: "error", timeout: 5000 })
         }
         console.log("El status es:", error.response.status); // Código de estado HTTP
         console.log("Los headers son:", error.response.headers); // Headers de la respuesta
       } else if (error.request) {
-        ToasterHelper.show({ text: JSON.stringify(error.request), type: "error", timeout: 5000 })
+        // ToasterHelper.show({ text: JSON.stringify(error.request), type: "error", timeout: 5000 })
         console.log("No se recibió respuesta, el error es:", error.request);
       } else {
-        ToasterHelper.show({ text: JSON.stringify(error.message), type: "error", timeout: 5000 })
+        // ToasterHelper.show({ text: JSON.stringify(error.message), type: "error", timeout: 5000 })
         console.log("Error al hacer la solicitud:", error.message);
       }
       console.log("Config de la solicitud:", error.config);
