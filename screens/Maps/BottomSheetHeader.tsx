@@ -53,7 +53,7 @@ const BottomSheetHeader = (props : Props) => {
     const responseNodo: any = await getOneNodo(responseMufa?.idNodo);
     const responseTroncal: any = await getOneTroncal(responseNodo?.idTroncal);
 
-    const prefix = `${responseTroncal?.distrito} / ${responseTroncal?.nombre} / ${responseNodo?.nombre} / ${responseMufa?.nombre} / ${responseSubMufa?.nombre}`;
+    const prefix = `${responseTroncal?.distrito ? responseTroncal?.distrito + '/ ' : ''} ${responseTroncal?.nombre} / ${responseNodo?.nombre} / ${responseMufa?.nombre} / ${responseSubMufa?.nombre}`;
     setPrefix(prefix)
   }
 

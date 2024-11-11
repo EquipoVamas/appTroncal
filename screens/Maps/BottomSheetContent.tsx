@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { View, StyleSheet, TouchableOpacity } from 'react-native'
 import stylesDefault from '../style'
-import { Surface, Card, ActivityIndicator, MD2Colors, TextInput, Text } from 'react-native-paper'
+import { Surface, Card, ActivityIndicator, MD2Colors, TextInput, Text, Snackbar } from 'react-native-paper'
 import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 import { getOneDetalleItem } from '../../services/dataBase';
 import { sendImageIA } from '../../services/axios';
@@ -10,6 +10,9 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import { Controller, useForm } from 'react-hook-form';
 import Layout from '../../components/Layout';
 import { useLocation } from '../../store/useLocation';
+import { Colors } from 'react-native/Libraries/NewAppScreen';
+import { getCurrentLocation } from '../../components/Functions';
+import { checkOneByOne } from '../../services/permissionsService';
 
 interface Props {
   data: any;
@@ -27,13 +30,31 @@ const BottomSheetContent = ( props : Props) => {
   const wavelengths = ['1310', '1550', '1310', '1550'];
   const [ cardImg, setCardImg ] = useState(schemaRef);
   const [ loading, setLoading ] = useState(false);
-
+  const modes = useBearStore((state) => state.mode)
+  const isDarkMode = modes === 'dark';
   const { lastKnownLocation } = useLocation()
+  const [visibleSnackBarAlert, setVisibleSnackBarAlert] = useState(false);
+
+  const onToggleSnackBar = () => setVisibleSnackBarAlert(!visibleSnackBarAlert);
+
+  const onDismissSnackBar = () => {
+    setTimeout(() => {
+      setVisibleSnackBarAlert(false)
+    }, 1000)
+  };
 
   const takePhoto = async ( item : any ) => {
     const { orden, nameCard }= item;
     var isPowerMeter = nameCard == 'Spliter 1' || nameCard == 'Spliter 2' ? true : false;
     
+    if( !lastKnownLocation?.latitude && !lastKnownLocation?.longitude ) {
+      await checkOneByOne()
+
+      onToggleSnackBar();
+      return;
+    }
+
+
     if(item?.edit != 1) {
       const response = await verifyPhoto(item);
       if(response) return;
@@ -50,8 +71,9 @@ const BottomSheetContent = ( props : Props) => {
           descripcion = response?.body?.find(( val : any) => val?.orden == orden).label
         }
 
+
         setVisible(true);
-        
+
         takenFile({
           id: data.id,
           orden: orden,
@@ -61,8 +83,9 @@ const BottomSheetContent = ( props : Props) => {
           edit: 0,
           nameCard: nameCard,
           nameItem: data?.nombre,
-          latitud: lastKnownLocation?.latitude || '',
-          longitud: lastKnownLocation?.longitude || '',
+          latitud: lastKnownLocation?.latitude,
+          longitud: lastKnownLocation?.longitude,
+
         });
       }
     });
@@ -147,7 +170,20 @@ const BottomSheetContent = ( props : Props) => {
         var descripcion = response?.descripcion;
         if ( statusIA && statusNet && isPowerMeter ) descripcion = await getDescriptionIA(response?.assets[0]);
 
-        var datos = { id: data.id, orden : response?.orden, nameItem: data?.nombre, file: response?.file, descripcion: descripcion, fechaFoto : response?.fechaFoto, nameCard: item?.nameCard, edit: 1 }
+        var datos = {
+          id: data.id,
+          orden: response?.orden,
+          nameItem: data?.nombre,
+          file: response?.file,
+          descripcion: descripcion,
+          fechaFoto: response?.fechaFoto,
+          nameCard: item?.nameCard,
+          edit: 1,
+          latitud: lastKnownLocation?.latitude,
+          longitud: lastKnownLocation?.longitude,
+        };
+
+        console.log("verifyfoto, " , datos)
         takenFile(datos);
         return true
       }
@@ -156,6 +192,13 @@ const BottomSheetContent = ( props : Props) => {
     } 
   }
   
+  useEffect(() => {
+    if (lastKnownLocation === null) {
+      getCurrentLocation();
+    }
+  }, [lastKnownLocation]);
+
+
   useEffect(() => {
     if(data) {
       compareArchive(data);
@@ -170,7 +213,21 @@ const BottomSheetContent = ( props : Props) => {
 
   return (
     <View style={style.container}>
-
+      <View style={style.container}>
+        <Snackbar
+          visible={visibleSnackBarAlert}
+          onDismiss={() => setVisibleSnackBarAlert(false)}
+          elevation={3}
+          style= {{  backgroundColor: isDarkMode ? Colors.darker : Colors.lighter }}
+          action={{
+            label: 'Cerrar',
+            onPress: () => {
+              onDismissSnackBar();
+            },
+          }}>
+          <Text style={ { fontSize: 16 } }>No se pueden obtener las coordenadas. Por favor, cierre la aplicación y encienda la ubicación de su dispositivo.</Text>
+        </Snackbar>
+      </View>
       {
         cardImg.filter(( val : any) => val?.name == 'Spliter 1' || val?.name == 'Spliter 2').length > 0 && (
           <View style={style.containerHeader}>
@@ -253,6 +310,12 @@ const BottomSheetContent = ( props : Props) => {
 
 const style = StyleSheet.create({
   container: { marginVertical: 5 },
+  containerAlert: {
+    flex: 1,
+    justifyContent: 'space-between',
+    position: 'absolute'
+  },
+
   containerHeader: {
     ...stylesDefault.cyanLightBg,
     padding: 8,

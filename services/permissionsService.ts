@@ -85,7 +85,6 @@ export const requestOneByOne = async () => {
 export const checkOneByOne = async () => {
     for (const perm of permissions) {
         var status = await check(perm);
-        //console.log("El status es", status);
         if(status == "denied"){
             verifyExplainPermissions();
             break;
